@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cybersecurity Awareness Quiz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .btn {
+            @apply bg-white text-gray-800 font-medium py-3 px-6 rounded-xl shadow-md transition-all duration-300 ease-in-out;
+        }
+        .btn:not(:disabled):hover {
+            transform: scale(1.02);
+            @apply bg-gray-50;
+        }
+        .selected {
+            @apply !bg-blue-200;
+        }
+        .correct {
+            @apply !bg-green-500 !text-white !shadow-lg;
+        }
+        .correct:hover {
+            transform: scale(1.02);
+            @apply !bg-green-600;
+        }
+        .incorrect {
+            @apply !bg-red-500 !text-white !shadow-lg;
+        }
+        .incorrect:hover {
+            transform: scale(1.02);
+            @apply !bg-red-600;
+        }
+        .progress-container {
+            @apply w-full bg-gray-200 rounded-full h-2.5 mt-4;
+        }
+        .progress-bar {
+            @apply bg-blue-500 h-2.5 rounded-full transition-all duration-300 ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+<div class="container mx-auto p-4 md:p-8">
+
+    <!-- Header Section -->
+    <header class="text-center mb-8">
+        <h1 class="text-4xl font-extrabold text-gray-900 mb-2">Cybersecurity Awareness Quiz</h1>
+        <p class="text-lg text-gray-600">Test your knowledge and stay safe online.</p>
+        <p class="mt-4 text-sm text-gray-500">This app supports SDG 4: Quality Education by providing a free, accessible learning tool.</p>
+    </header>
+
+    <!-- Start Screen -->
+    <div id="start-screen" class="bg-white rounded-2xl shadow-xl p-8 max-w-lg mx-auto text-center">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">Ready to test your knowledge?</h2>
+        <p class="text-gray-600 mb-6">This quiz covers essential topics to help you protect your digital life.</p>
+        <button id="start-btn" class="bg-blue-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-blue-700 transition-colors">Start Quiz</button>
+    </div>
+
+    <!-- Quiz Container -->
+    <div id="quiz-container" class="hidden bg-white rounded-2xl shadow-xl p-6 md:p-8 max-w-xl mx-auto">
+        <div class="progress-container">
+            <div id="progress-bar" class="progress-bar" style="width: 0%;"></div>
+        </div>
+        <div class="flex justify-between items-center text-sm text-gray-500 mt-2 mb-6">
+            <span id="question-number">Question 1 of 10</span>
+            <span id="score-display">Score: 0</span>
+        </div>
+        <div id="question-text" class="text-lg font-semibold text-gray-800 mb-6"></div>
+        <div id="answers-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Answer buttons will be generated here -->
+        </div>
+        <button id="next-btn" class="hidden w-full mt-6 bg-blue-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-blue-700 transition-colors">Next Question</button>
+    </div>
+
+    <!-- Results Screen -->
+    <div id="results-screen" class="hidden bg-white rounded-2xl shadow-xl p-8 max-w-2xl mx-auto">
+        <h2 class="text-3xl font-bold text-center text-gray-800 mb-4">Quiz Complete!</h2>
+        <div class="flex flex-col items-center mb-6">
+            <div id="final-score" class="text-5xl font-extrabold text-blue-600 mb-2"></div>
+            <div id="score-text" class="text-lg text-gray-600"></div>
+        </div>
+        <div id="review-container" class="space-y-4">
+            <!-- Review items will be generated here -->
+        </div>
+        <button id="restart-btn" class="w-full mt-8 bg-blue-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-blue-700 transition-colors">Restart Quiz</button>
+    </div>
+
+    <!-- Advice Section -->
+    <div id="advice-section" class="hidden mt-8 max-w-2xl mx-auto p-8 bg-white rounded-2xl shadow-xl">
+        <h2 class="text-3xl font-bold text-gray-800 mb-4 text-center">Your Cybersecurity Tips</h2>
+        <p class="text-gray-600 text-center mb-6">Now that you've completed the quiz, here are some essential tips to help you stay safe online.</p>
+        <ul class="list-disc list-inside space-y-4 text-gray-600">
+            <li>
+                <span class="font-bold text-gray-800">Use Strong, Unique Passwords:</span> Never reuse passwords across different accounts. Use a mix of uppercase and lowercase letters, numbers, and symbols.
+            </li>
+            <li>
+                <span class="font-bold text-gray-800">Enable Multi-Factor Authentication (MFA):</span> This adds an extra layer of security beyond just a password.
+            </li>
+            <li>
+                <span class="font-bold text-gray-800">Be Wary of Phishing:</span> Be skeptical of emails, texts, or calls asking for personal information or urgent action.
+            </li>
+            <li>
+                <span class="font-bold text-gray-800">Keep Your Software Updated:</span> Updates often include critical security patches that protect you from new threats.
+            </li>
+            <li>
+                <span class="font-bold text-gray-800">Back Up Your Data:</span> Regularly back up your important files to an external hard drive or cloud service to protect against data loss from ransomware or hardware failure.
+            </li>
+        </ul>
+    </div>
+
+</div>
+
+<script>
+    const quizData = [
+        {
+            question: "What is 'phishing'?",
+            answers: [
+                { text: "A technique to protect your computer from viruses.", correct: false },
+                { text: "A scam to trick you into revealing personal information.", correct: true },
+                { text: "A type of malware that encrypts your files.", correct: false },
+                { text: "A method for securely browsing the internet.", correct: false }
+            ]
+        },
+        {
+            question: "Which of these is an example of a strong password?",
+            answers: [
+                { text: "Password123", correct: false },
+                { text: "J@n3D0e_2024!", correct: true },
+                { text: "12345678", correct: false },
+                { text: "qwerty", correct: false }
+            ]
+        },
+        {
+            question: "Why should you be cautious when using public Wi-Fi?",
+            answers: [
+                { text: "It can make your device run slower.", correct: false },
+                { text: "Hackers can easily intercept your data.", correct: true },
+                { text: "It uses up your mobile data plan.", correct: false },
+                { text: "It's only available for a limited time.", correct: false }
+            ]
+        },
+        {
+            question: "What does 'MFA' or '2FA' stand for in cybersecurity?",
+            answers: [
+                { text: "Malware and Firewall Application", correct: false },
+                { text: "Mobile Forensic Analysis", correct: false },
+                { text: "Multi-Factor/Two-Factor Authentication", correct: true },
+                { text: "Mandatory File Archiving", correct: false }
+            ]
+        },
+        {
+            question: "What is a 'zero-day' vulnerability?",
+            answers: [
+                { text: "A bug that has been known for years but is still not patched.", correct: false },
+                { text: "A newly discovered software flaw that has not yet been patched.", correct: true },
+                { text: "A security flaw in an operating system that is more than a year old.", correct: false },
+                { text: "A type of malware that only works for a single day.", correct: false }
+            ]
+        },
+        {
+            question: "Which of these practices can protect you from ransomware?",
+            answers: [
+                { text: "Paying the ransom immediately to get your files back.", correct: false },
+                { text: "Disabling your antivirus software to improve performance.", correct: false },
+                { text: "Regularly backing up your data to an external device.", correct: true },
+                { text: "Clicking on suspicious links to identify their source.", correct: false }
+            ]
+        },
+        {
+            question: "What is the primary purpose of a firewall?",
+            answers: [
+                { text: "To increase your internet speed.", correct: false },
+                { text: "To prevent unauthorized access to your network.", correct: true },
+                { text: "To hide your IP address from websites.", correct: false },
+                { text: "To scan and remove viruses from your computer.", correct: false }
+            ]
+        },
+        {
+            question: "What is 'social engineering' in cybersecurity?",
+            answers: [
+                { text: "Using social media to report cyber crimes.", correct: false },
+                { text: "The use of psychological manipulation to trick people into giving up confidential information.", correct: true },
+                { text: "A method of creating secure social network profiles.", correct: false },
+                { text: "A type of software that automatically fixes security flaws.", correct: false }
+            ]
+        },
+        {
+            question: "When should you update your software and apps?",
+            answers: [
+                { text: "Never, to avoid new bugs.", correct: false },
+                { text: "Only if a feature you need is added.", correct: false },
+                { text: "As soon as an update is available to patch security flaws.", correct: true },
+                { text: "Once a year, during a major system overhaul.", correct: false }
+            ]
+        },
+        {
+            question: "What is the best way to handle a suspicious email?",
+            answers: [
+                { text: "Immediately click on any links or attachments to check them.", correct: false },
+                { text: "Forward it to all of your contacts as a warning.", correct: false },
+                { text: "Delete it without opening, or mark it as spam.", correct: true },
+                { text: "Reply to the sender and ask them to verify their identity.", correct: false }
+            ]
+        }
+    ];
+
+    const startBtn = document.getElementById('start-btn');
+    const startScreen = document.getElementById('start-screen');
+    const quizContainer = document.getElementById('quiz-container');
+    const resultsScreen = document.getElementById('results-screen');
+    const restartBtn = document.getElementById('restart-btn');
+    const questionText = document.getElementById('question-text');
+    const answersContainer = document.getElementById('answers-container');
+    const nextBtn = document.getElementById('next-btn');
+    const progressBar = document.getElementById('progress-bar');
+    const questionNumberEl = document.getElementById('question-number');
+    const scoreDisplay = document.getElementById('score-display');
+    const finalScoreEl = document.getElementById('final-score');
+    const scoreTextEl = document.getElementById('score-text');
+    const reviewContainer = document.getElementById('review-container');
+    const adviceSection = document.getElementById('advice-section');
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let incorrectAnswers = [];
+    let questionAnswered = false;
+
+    // Shuffle the quiz questions at the start
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
+    startBtn.addEventListener('click', startQuiz);
+    restartBtn.addEventListener('click', startQuiz);
+    nextBtn.addEventListener('click', () => {
+        if (questionAnswered) {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizData.length) {
+                displayQuestion();
+            } else {
+                endQuiz();
+            }
+        }
+    });
+
+    function startQuiz() {
+        shuffleArray(quizData);
+        currentQuestionIndex = 0;
+        score = 0;
+        incorrectAnswers = [];
+        startScreen.classList.add('hidden');
+        resultsScreen.classList.add('hidden');
+        adviceSection.classList.add('hidden'); // Hide advice section on restart
+        quizContainer.classList.remove('hidden');
+        displayQuestion();
+        updateScoreDisplay();
+    }
+
+    function displayQuestion() {
+        questionAnswered = false;
+        nextBtn.classList.add('hidden');
+        answersContainer.innerHTML = '';
+
+        const question = quizData[currentQuestionIndex];
+        questionText.textContent = question.question;
+        questionNumberEl.textContent = `Question ${currentQuestionIndex + 1} of ${quizData.length}`;
+        updateProgressBar();
+
+        question.answers.forEach((answer, index) => {
+            const button = document.createElement('button');
+            button.textContent = answer.text;
+            button.classList.add('btn', 'w-full', 'text-left');
+            button.dataset.index = index;
+            button.addEventListener('click', () => checkAnswer(button, answer.correct));
+            answersContainer.appendChild(button);
+        });
+    }
+
+    function checkAnswer(selectedButton, isCorrect) {
+        if (questionAnswered) return;
+        questionAnswered = true;
+
+        // Apply light blue "selected" color immediately
+        selectedButton.classList.add('selected');
+
+        // Delay the final color change
+        setTimeout(() => {
+            selectedButton.classList.remove('selected');
+            selectedButton.classList.add(isCorrect ? 'correct' : 'incorrect');
+
+            let correctButton = null;
+            if (!isCorrect) {
+                const correctAnswerIndex = quizData[currentQuestionIndex].answers.findIndex(ans => ans.correct);
+                const allAnswerButtons = answersContainer.querySelectorAll('.btn');
+                correctButton = allAnswerButtons[correctAnswerIndex];
+                correctButton.classList.add('correct');
+                incorrectAnswers.push({
+                    question: quizData[currentQuestionIndex].question,
+                    userAnswer: selectedButton.textContent,
+                    correctAnswer: quizData[currentQuestionIndex].answers[correctAnswerIndex].text
+                });
+            } else {
+                score++;
+            }
+
+            // Disable all buttons
+            answersContainer.querySelectorAll('.btn').forEach(btn => btn.disabled = true);
+
+            // Remove disabled state from the buttons that have a color to allow hover
+            selectedButton.disabled = false;
+            if (correctButton) {
+                correctButton.disabled = false;
+            }
+            
+            updateScoreDisplay();
+            nextBtn.classList.remove('hidden');
+        }, 300); // 300ms delay to show the light blue color
+    }
+
+    function updateProgressBar() {
+        const progress = (currentQuestionIndex / quizData.length) * 100;
+        progressBar.style.width = `${progress}%`;
+    }
+
+    function updateScoreDisplay() {
+        scoreDisplay.textContent = `Score: ${score}`;
+    }
+
+    function endQuiz() {
+        quizContainer.classList.add('hidden');
+        resultsScreen.classList.remove('hidden');
+        adviceSection.classList.remove('hidden'); // Show the advice section
+        finalScoreEl.textContent = `${score} / ${quizData.length}`;
+        scoreTextEl.textContent = `You scored ${score} out of ${quizData.length} correctly.`;
+        
+        reviewContainer.innerHTML = '';
+        if (incorrectAnswers.length > 0) {
+            incorrectAnswers.forEach(item => {
+                const reviewItem = document.createElement('div');
+                reviewItem.classList.add('p-4', 'rounded-xl', 'bg-red-50', 'border', 'border-red-200', 'shadow-sm', 'text-gray-800');
+                reviewItem.innerHTML = `
+                    <p class="font-bold text-red-700 mb-1">Question:</p>
+                    <p class="text-gray-800 mb-2">${item.question}</p>
+                    <p class="font-bold text-red-700 mb-1">Your Answer:</p>
+                    <p class="text-red-600 mb-2">${item.userAnswer}</p>
+                    <p class="font-bold text-green-700 mb-1">Correct Answer:</p>
+                    <p class="text-green-600">${item.correctAnswer}</p>
+                `;
+                reviewContainer.appendChild(reviewItem);
+            });
+        } else {
+             const successMsg = document.createElement('div');
+             successMsg.classList.add('p-4', 'rounded-xl', 'bg-green-50', 'border', 'border-green-200', 'text-center');
+             successMsg.innerHTML = `<p class="text-lg font-bold text-green-700">Congratulations, you got all the questions right!</p>`;
+             reviewContainer.appendChild(successMsg);
+        }
+    }
+
+</script>
+
+</body>
+</html>
